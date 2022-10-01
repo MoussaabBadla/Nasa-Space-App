@@ -1,0 +1,23 @@
+            PositionedTransition(
+
+              rect: RelativeRectTween(
+                begin: RelativeRect.fromSize(
+                    const   Rect.fromLTWH(0, 0, 588 , 588), biggest),
+                end: RelativeRect.fromRect(
+                    Rect.fromLTWH(biggest.width - 588,
+                        biggest.height - 588, 697, 697),
+                    Rect.fromLTWH(biggest.width - 599,
+                        biggest.height - 599, 697, 697),
+
+                    )
+              ).animate(CurvedAnimation(
+                parent: _controller,
+                curve: Curves.easeInOutCubic,
+              )),
+
+              child: Image.asset(
+              
+              "assets/images/bg.png",width: 588 , height: 697,fit: BoxFit.none,), )
+          ],
+              );
+  }),
