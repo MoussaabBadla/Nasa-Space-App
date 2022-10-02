@@ -3,14 +3,14 @@
 import 'dart:convert';
 
 class Content {
- final String title ; 
- final String nasa_id ; 
- final String description ; 
- final String date_created ; 
- final String href ; 
- final List<dynamic> keywords;
+ final String? title ; 
+ final String? nasa_id ; 
+ final String? description ; 
+ final String? date_created ; 
+ final String? href ; 
+ final List<dynamic>? keywords;
 
-  Content({required this.title,required this.nasa_id,required this.description,required this.date_created,required this.href,required this.keywords}) ;
+  Content({ this.title, this.nasa_id, this.description, this.date_created, this.href, this.keywords}) ;
  
 
   Map<String, dynamic> toMap() {
@@ -24,22 +24,24 @@ class Content {
       
     };
   }
-
-  factory Content.fromMap(Map<String, dynamic> map) {
+  
+  factory Content.fromMap( List<dynamic>? map , List<dynamic>? map2) {
+    print(map);
+    print(map2);
+    Map<String , dynamic>?  _map = map !=null?  map[0]  : null;
+    Map<String , dynamic>? _map2 = map2 !=null?  map2[0]  : null;
     return Content(
-      nasa_id: map['nasa_id'] as String,
-      title: map['title'] as String,
-      description: map['description'] as String,
+      nasa_id: _map!=null ?  _map['nasa_id']??   null : null,
+      title: _map!=null ?  _map['title']?? null : null,
+      description: _map!=null ?  _map['description']??  null : null ,
       date_created:
-       map['date_created']   as String ,
-      href:        map['href']  as String ,
+        _map!=null ?  _map['date_created']?? null  : null,
+      href:        _map2!=null ?  _map2['href']?? null : null,
     
-      keywords: List<String>.from((map['keywords'])),
+      keywords:_map!=null ? _map['keywords']!=null? List<dynamic>.from((_map['keywords'])) : null : null 
     );
   }
 
   String toJson() => json.encode(toMap());
 
-  factory Content.fromJson(String source) =>
-      Content.fromMap(json.decode(source) as Map<String, dynamic>);
 }

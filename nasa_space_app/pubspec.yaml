@@ -38,8 +38,11 @@ dependencies:
   cupertino_icons: ^1.0.2
   flutter_native_splash: ^2.2.10+1
   http: ^0.13.5
-  url_launcher: ^6.1.6
   flutter_bloc: ^8.1.1
+  equatable: ^2.0.5
+  flutter_secure_storage: ^6.0.0
+  flutter_share_me: ^0.11.0
+
    
 
 flutter_native_splash:

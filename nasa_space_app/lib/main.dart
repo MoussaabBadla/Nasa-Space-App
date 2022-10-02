@@ -4,32 +4,72 @@ import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:nasa_space_app/UI/Screens/get_started.dart';
 import 'package:nasa_space_app/UI/Screens/searchscreen.dart';
 import 'package:nasa_space_app/constant.dart';
+import 'package:nasa_space_app/repo/auth_repo.dart';
 
-import 'models/logic/cubit/search_cubit.dart';
+import 'UI/Screens/authscreen.dart';
+import 'logic/cubit/bloc/authentication_bloc.dart';
+import 'logic/cubit/cubit/imageoftheday_cubit.dart';
+import 'logic/cubit/search_cubit.dart';
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-
-  FlutterNativeSplash.removeAfter(initialization);
-
-  runApp(const MyApp());
+void main() {
+  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+  runApp(MyApp(userRepository: UserRepository()));
 }
 
-Future initialization(BuildContext context) async {
-  await Future.delayed(const Duration(seconds: 3));
+class MyApp extends StatefulWidget {
+  const MyApp({
+    Key? key,
+    required this.userRepository,
+  }) : super(key: key);
+  final UserRepository userRepository;
+
+  @override
+  State<MyApp> createState() => _MyAppState();
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class _MyAppState extends State<MyApp> {
+  late AuthenticationBloc authenticationBloc;
+  UserRepository get userRepository => widget.userRepository;
+  @override
+  void initState() {
+    authenticationBloc = AuthenticationBloc(userRepository: userRepository);
+    authenticationBloc.add(AppStarted());
+
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    authenticationBloc.close();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => SearchCubit(),
+    return MultiBlocProvider(
+      providers: [
+                BlocProvider(
+          create: (_) => ImageofthedayCubit(),
+        ),
+
+        BlocProvider(
+          create: (_) => SearchCubit(),
+        ),
+        BlocProvider(
+          create: (_) => authenticationBloc,
+        ),
+      ],
       child: MaterialApp(
           title: 'NASART',
           theme: ThemeData(
             textTheme: TextTheme(
+              headlineSmall:                TextStyle(
+                  color: darkblue.withOpacity(0.4),
+                  fontSize: 14,
+                  fontFamily: 'Nasalization',
+                ),
+ 
                 displaySmall: TextStyle(
                   color: darkblue.withOpacity(0.7),
                   fontSize: 10,
@@ -73,7 +113,18 @@ class MyApp extends StatelessWidget {
             primarySwatch: Colors.blue,
           ),
           routes: {Search.route: ((context) => Search())},
-          home: const GetStarted()),
+          home: BlocBuilder<AuthenticationBloc, AuthenticationState>(
+              builder: (context, state) {
+                if (state is! AuthenticationUninitialized) {
+                  FlutterNativeSplash.remove();
+                }
+                return AuthScreen(userRepository: userRepository,);
+              },
+            )
+          
+          
+          
+          ),
     );
   }
 }

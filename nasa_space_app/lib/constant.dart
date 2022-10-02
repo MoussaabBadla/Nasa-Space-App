@@ -18,3 +18,5 @@ import 'package:flutter/material.dart';
   'Nebula',
   'Moon'
 ];
+
+  const String uri = 'http://192.168.192.38:5000';

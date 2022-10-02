@@ -3,10 +3,21 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nasa_space_app/UI/Screens/get_started.dart';
 import 'package:nasa_space_app/UI/Screens/homepage.dart';
 import 'package:nasa_space_app/constant.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_share_me/flutter_share_me.dart';
 
+import '../../logic/cubit/search_cubit.dart';
 import '../../models/content.dart';
-import '../../models/logic/cubit/search_cubit.dart';
+enum Share {
+  facebook,
+  messenger,
+  twitter,
+  whatsapp,
+  whatsapp_personal,
+  whatsapp_business,
+  share_system,
+  share_instagram,
+  share_telegram
+}
 
 class Search extends StatefulWidget {
   const Search({super.key});
@@ -42,10 +53,11 @@ class _SearchState extends State<Search> {
             BlocBuilder<SearchCubit, SearchState>(
               builder: (context, state) {
                 if (state is Searchdone){
+                  print(state.contents[0].nasa_id);
               return        Expanded(
                   child: PageView.builder(
                     scrollDirection: Axis.vertical,
-                    itemCount: 5,
+                    itemCount: state.contents.length,
                     itemBuilder: ((context, ind) => GestureDetector(
                           onTap: () {
                             setState(() {
@@ -73,8 +85,10 @@ class _SearchState extends State<Search> {
                                           borderRadius: const BorderRadius.only(
                                               topLeft: Radius.circular(8),
                                               topRight: Radius.circular(8)),
+                                              
                                           child: Image.network(
-                                            state.contents[ind].href,
+                                            state.contents[ind].href !=null?
+                                            state.contents[ind].href!:'https://cdn.mos.cms.futurecdn.net/cMDRA3454bGvfZASbxviZe.jpg',
                                             height: 290,
                                             width: 312,
                                           ),
@@ -116,17 +130,19 @@ class _SearchState extends State<Search> {
                                           padding: const EdgeInsets.only(
                                               left: 8, right: 8, bottom: 8),
                                           child: Text(
-                                            state.contents[ind].title,
+                                            state.contents[ind].title != null ?
+                                            state.contents[ind].title! : '',
                                             style: Theme.of(context)
                                                 .textTheme
                                                 .labelSmall,
                                           ),
                                         ),
+                                        if(state.contents[ind].description!=null)
                                         Padding(
                                           padding: const EdgeInsets.only(
                                               left: 8, right: 8, bottom: 8),
                                           child: Text(
-                                            state.contents[ind].description
+                                            state.contents[ind].description!
                                             ,
                                             style: Theme.of(context)
                                                 .textTheme
@@ -137,7 +153,7 @@ class _SearchState extends State<Search> {
                                           padding: const EdgeInsets.only(
                                               left: 8, right: 8, bottom: 8),
                                           child: Text(
-                                            state.contents[ind].date_created,
+                                            state.contents[ind].date_created!,
                                             style: TextStyle(
                                               color: darkblue.withOpacity(0.9),
                                               fontSize: 10,
@@ -145,9 +161,10 @@ class _SearchState extends State<Search> {
                                             ),
                                           ),
                                         ),
+                                        if(state.contents[ind].keywords != null)
                                         Wrap(
                                           children: List.generate(
-                                              state.contents[ind].keywords.length,
+                                              state.contents[ind].keywords!.length,
                                               (index) => Padding(
                                                     padding:
                                                         const EdgeInsets.all(
@@ -165,8 +182,10 @@ class _SearchState extends State<Search> {
                                                                     .symmetric(
                                                                 horizontal: 8,
                                                                 vertical: 3),
-                                                        child: Text(
-                                                          state.contents[ind].keywords[index],
+
+                                                        child: 
+                                                        Text(
+                                                          state.contents[ind].keywords![index],
                                                           style:
                                                               Theme.of(context)
                                                                   .textTheme
@@ -227,7 +246,10 @@ class _SearchState extends State<Search> {
                                                 )),
                                             IconButton(
                                                 onPressed:
-                                                    share ? () {} : () {},
+                                                    share ? () {} : () {
+                                                                                                            onButtonTap(Share.twitter,state.contents[ind].title!, state.contents[ind].href!);
+
+                                                    },
                                                 icon: Image.asset(
                                                   'assets/images/twitter.png',
                                                   width: 28,
@@ -248,7 +270,9 @@ class _SearchState extends State<Search> {
                                                 )),
                                             IconButton(
                                                 onPressed:
-                                                    share ? () {} : () {},
+                                                    share ? () {
+                                                      onButtonTap(Share.facebook,state.contents[ind].title!, state.contents[ind].href!);
+                                                    } : () {},
                                                 icon: Image.asset(
                                                   'assets/images/facebook.png',
                                                   width: 28,
@@ -296,3 +320,40 @@ class BackGround extends StatelessWidget {
     ]);
   }
 }
+  Future<void> onButtonTap(Share share, String msg , String url) async {
+
+    String? response;
+    final FlutterShareMe flutterShareMe = FlutterShareMe();
+    switch (share) {
+
+      
+      case Share.facebook:
+        response = await flutterShareMe.shareToFacebook(url: url, msg: msg);
+        break;
+      case Share.twitter:
+        response = await flutterShareMe.shareToTwitter(url: url, msg: msg);
+        break;
+      case Share.whatsapp:
+          response = await flutterShareMe.shareToWhatsApp(msg: msg,);
+        
+        break;
+      case Share.whatsapp_business:
+        response = await flutterShareMe.shareToWhatsApp(msg: msg);
+        break;
+      case Share.share_system:
+        response = await flutterShareMe.shareToSystem(msg: msg);
+        break;
+      case Share.share_instagram:
+      case Share.messenger:
+        // TODO: Handle this case.
+        break;
+      case Share.whatsapp_personal:
+        // TODO: Handle this case.
+        break;
+      case Share.share_telegram:
+        // TODO: Handle this case.
+        break;
+    }
+    debugPrint(response);
+  }
+

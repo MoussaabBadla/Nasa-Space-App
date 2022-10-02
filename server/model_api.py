@@ -15,7 +15,6 @@ from operator import itemgetter
 
 
 df = pd.read_csv('data.csv')
-
 spacy_nlp = spacy.load('en_core_web_sm')
 
 #create list of punctuations and stopwords
@@ -148,7 +147,7 @@ class Users(Resource):
 
         parser = reqparse.RequestParser()
 
-        parser.add_argument('query', required=True)
+        parser.add_argument('query', required=True )
         args = parser.parse_args()
         loaded_model = pickle.load(open('model', 'rb'))
         input_data = args['query']
@@ -161,6 +160,6 @@ api.add_resource(Users, '/users')
 
 if __name__ == '__main__':
 
-    app.run()  # run our Flask app
+    app.run(debug =True)  # run our Flask app
 
 
