@@ -112,13 +112,15 @@ class _MyAppState extends State<MyApp> {
                 )),
             primarySwatch: Colors.blue,
           ),
-          routes: {Search.route: ((context) => Search())},
+          routes: {Search.route: ((context) => Search()),
+          AuthScreen.route : ((context) => AuthScreen(userRepository: userRepository,))
+           },
           home: BlocBuilder<AuthenticationBloc, AuthenticationState>(
               builder: (context, state) {
                 if (state is! AuthenticationUninitialized) {
                   FlutterNativeSplash.remove();
                 }
-                return AuthScreen(userRepository: userRepository,);
+                return GetStarted();
               },
             )
           

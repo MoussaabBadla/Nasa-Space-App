@@ -3,9 +3,11 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:nasa_space_app/UI/Screens/authscreen.dart';
 import 'package:nasa_space_app/UI/Screens/homepage.dart';
 import 'package:nasa_space_app/UI/Screens/searchscreen.dart';
 import 'package:nasa_space_app/constant.dart';
+import 'package:nasa_space_app/repo/auth_repo.dart';
 
 class GetStarted extends StatefulWidget {
   const GetStarted({super.key});
@@ -100,8 +102,8 @@ class _GetStartedState extends State<GetStarted> with TickerProviderStateMixin {
                              ),
                              onPressed: (){
                   Navigator.of(context).pushAndRemoveUntil(
-                   MaterialPageRoute<void>(builder: (BuildContext context) => const Homepage()),
-                   ModalRoute.withName(Homepage.route),
+                   MaterialPageRoute<void>(builder: (BuildContext context) => AuthScreen(userRepository: UserRepository())),
+                   ModalRoute.withName(AuthScreen.route)
                
                
                   );

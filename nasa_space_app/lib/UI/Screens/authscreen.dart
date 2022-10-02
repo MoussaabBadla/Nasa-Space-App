@@ -12,7 +12,7 @@ import 'get_started.dart';
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({Key? key, required this.userRepository}) : super(key: key);
-
+  static const String route = '/auth';
   final UserRepository userRepository;
 
   @override
